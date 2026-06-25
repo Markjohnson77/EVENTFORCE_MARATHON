@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventforce — Arjun Mehta | Participant Dashboard</title>
+  <meta name="description"
+    content="Your marathon dashboard on Eventforce — India's fastest-growing marathon platform. View your race stats, splits, certificate, photos, and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ===== RESET & CUSTOM PROPERTIES ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #111111;
+      --accent: #C8F400;
+      --white: #ffffff;
+      --black: #000000;
+      --card-dark: #1a1a1a;
+      --muted: #999999;
+      --muted-dim: #666666;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      border: none;
+      outline: none;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    .anton {
+      font-family: 'Barlow Condensed', sans-serif;
+      text-transform: uppercase;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .accent {
+      color: var(--accent);
+    }
+
+    .outline-accent {
+      -webkit-text-stroke: 1px var(--accent);
+      color: transparent;
+    }
+
+    .outline-black {
+      -webkit-text-stroke: 1px var(--black);
+      color: transparent;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--bg);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      border-bottom: 1px solid #222222;
+    }
+
+    .navbar__logo {
+      display: flex;
+      align-items: center;
+      position: relative;
+      height: 20px;
+    }
+
+    .navbar__logo img {
+      height: 20px;
+      width: auto;
+      display: block;
+    }
+
+    .navbar__logo .logo-blend {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: auto;
+      opacity: 0;
+    }
+
+    .navbar__links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .navbar__link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .navbar__link:hover,
+    .navbar__link--active {
+      border-bottom-color: var(--accent);
+    }
+
+    .navbar__hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .navbar__hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .navbar__hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .navbar__hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .navbar__hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 52px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .mobile-nav.open {
+      display: flex;
+    }
+
+    .mobile-nav a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .mobile-nav a:hover {
+      color: var(--accent);
+    }
+
+    /* ===== SECTION CONTAINERS ===== */
+    .section-dark {
+      background: var(--bg);
+    }
+
+    .section-accent {
+      background: var(--accent);
+    }
+
+    .section-padded {
+      padding: 80px 60px;
+    }
+
+    .two-col {
+      display: grid;
+      align-items: center;
+    }
+
+    .two-col--55-45 {
+      grid-template-columns: 55% 45%;
+    }
+
+    .two-col--45-55 {
+      grid-template-columns: 45% 55%;
+    }
+
+    .two-col--50-50 {
+      grid-template-columns: 50% 50%;
+    }
+
+    /* ===== SECTION 1 — HERO ===== */
+    .hero {
+      position: relative;
+      background: var(--bg);
+      padding: 100px 60px 60px;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('IMAGES/landing_img.png') center/cover no-repeat;
+      opacity: 0.2;
+      z-index: 0;
+    }
+
+    .hero__heading {
+      position: relative;
+      z-index: 1;
+      font-family: 'Barlow Condensed', sans-serif;
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .hero__line {
+      display: block;
+      font-size: 72px;
+      line-height: 72px;
+      letter-spacing: -0.7px;
+      font-weight: 400;
+      color: var(--white);
+    }
+
+    .hero__line--marathon {
+      font-size: 144px;
+      line-height: 144px;
+      letter-spacing: -1.4px;
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .hero__line .accent {
+      color: var(--accent);
+    }
+
+    .hero__press {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 60px;
+      flex-wrap: wrap;
+    }
+
+    .hero__press-item {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #555555;
+      padding: 0 24px;
+      white-space: nowrap;
+    }
+
+    .hero__press-item:first-child {
+      padding-left: 0;
+    }
+
+    .hero__press-item:last-child {
+      padding-right: 0;
+    }
+
+    .hero__press-divider {
+      width: 1px;
+      height: 16px;
+      background: #333333;
+      flex-shrink: 0;
+    }
+
+    /* ===== SECTION 2 — STATS BAR ===== */
+    .stats {
+      background: var(--bg);
+      border-top: 1px solid #222222;
+      border-bottom: 1px solid #222222;
+    }
+
+    .stats__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stats__item {
+      padding: 32px 20px;
+      text-align: center;
+      border-right: 1px solid #ffffff22;
+    }
+
+    .stats__item:last-child {
+      border-right: none;
+    }
+
+    .stats__number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 72px;
+      line-height: 72px;
+      letter-spacing: -0.7px;
+      color: var(--accent);
+    }
+
+    .stats__label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      margin-top: 8px;
+    }
+
+    /* ===== SECTION 3 — SPLITS ===== */
+    .splits {
+      background: var(--bg);
+    }
+
+    .splits__image {
+      width: 100%;
+      height: 100%;
+      min-height: 500px;
+      overflow: hidden;
+    }
+
+    .splits__content {
+      padding: 60px 60px 60px 40px;
+    }
+
+    .splits__heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 72px;
+      text-transform: uppercase;
+      line-height: 72px;
+      letter-spacing: -0.7px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .splits__heading-line-1 {
+      color: #FFFFFF;
+      height: 48px;
+      display: block;
+      z-index: 3;
+    }
+
+    .splits__heading-line-2 {
+      display: block;
+      z-index: 2;
+    }
+
+    .splits__body {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #C8F400;
+      margin-bottom: 32px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--black);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 18px;
+      text-transform: none;
+      letter-spacing: 1px;
+      padding: 12px 28px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 18px;
+      text-transform: none;
+      letter-spacing: 1px;
+      padding: 12px 28px;
+      border: 1px solid var(--white);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-secondary:hover {
+      opacity: 0.8;
+    }
+
+    /* ===== SECTION 4 — CERTIFICATE ===== */
+    .certificate {
+      position: relative;
+      background: var(--accent);
+      color: var(--black);
+      overflow: hidden;
+    }
+
+    .certificate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('IMAGES/certificate_img.png') center/cover no-repeat;
+      mix-blend-mode: multiply;
+      opacity: 0.55;
+      z-index: 0;
+    }
+
+    .certificate__left {
+      position: relative;
+      z-index: 1;
+      padding: 80px 60px;
+    }
+
+    .certificate__heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 90px;
+      text-transform: uppercase;
+      line-height: 90px;
+      letter-spacing: -0.7px;
+      color: var(--black);
+    }
+
+    .certificate__heading .cert-word {
+      font-size: 72px;
+    }
+
+    .certificate__right {
+      position: relative;
+      z-index: 1;
+      padding: 80px 60px 80px 20px;
+    }
+
+    .cert-card {
+      background: var(--card-dark);
+      padding: 28px 24px;
+    }
+
+    .cert-card__brand {
+      text-align: right;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-style: italic;
+      color: var(--accent);
+      text-transform: none;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+
+    .cert-card__label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: #666666;
+      margin-bottom: 4px;
+      margin-top: 16px;
+    }
+
+    .cert-card__label:first-of-type {
+      margin-top: 0;
+    }
+
+    .cert-card__value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .cert-card__value--large {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    .cert-card__buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .btn-cert-download {
+      flex: 1;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-size: 14px;
+      padding: 12px 16px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      transition: opacity 0.2s;
+    }
+
+    .btn-cert-share {
+      flex: 1;
+      background: var(--accent);
+      color: var(--black);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-size: 14px;
+      padding: 12px 16px;
+      border: 1px solid var(--black);
+      cursor: pointer;
+      text-align: center;
+      transition: opacity 0.2s;
+    }
+
+    .btn-cert-download:hover,
+    .btn-cert-share:hover {
+      opacity: 0.8;
+    }
+
+    /* ===== SECTION 5 — RACE PHOTOS ===== */
+    .photos {
+      background: var(--bg);
+      padding: 80px 60px;
+    }
+
+    .photos__header {
+      margin-bottom: 8px;
+    }
+
+    .photos__heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 72px;
+      text-transform: uppercase;
+      line-height: 72px;
+      letter-spacing: -0.7px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .photos__heading-line-1 {
+      color: #FFFFFF;
+      height: 48px;
+      display: block;
+      z-index: 3;
+    }
+
+    .photos__heading-line-2 {
+      display: block;
+      z-index: 2;
+    }
+
+    .photos__subtitle {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+
+    .photos__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .photos__cell {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+    }
+
+    .photos__cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+
+    .photos__cell:hover img {
+      transform: scale(1.05);
+    }
+
+    .photos__km-label {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: var(--accent);
+      color: var(--black);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      z-index: 2;
+    }
+
+    .photos__download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .photos__download .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .photos__download .btn-primary svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== SECTION 6 — RACE STORY ===== */
+    .story {
+      background: var(--bg);
+    }
+
+    .story__left {
+      padding: 80px 60px;
+    }
+
+    .story__heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 72px;
+      text-transform: uppercase;
+      line-height: 72px;
+      letter-spacing: -0.7px;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+
+    .story__heading .accent-big {
+      color: var(--accent);
+    }
+
+    .story__body {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #cccccc;
+      margin-bottom: 28px;
+    }
+
+    .story__buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .story__right {
+      padding: 80px 60px 80px 20px;
+    }
+
+    .story__video {
+      background: url('IMAGES/vdo_prev.png') no-repeat center center;
+      background-size: cover;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .story__play-btn {
+      width: 64px;
+      height: 64px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story__play-btn svg {
+      width: 48px;
+      height: 48px;
+      fill: var(--accent);
+    }
+
+    /* ===== SECTION 7 — CTA SUBSCRIBE ===== */
+    .cta-subscribe {
+      background: var(--accent);
+    }
+
+    .cta-subscribe .two-col {
+      align-items: center;
+    }
+
+    .cta__left {
+      padding: 80px 60px;
+    }
+
+    .cta__heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 72px;
+      text-transform: uppercase;
+      line-height: 72px;
+      letter-spacing: -0.7px;
+      color: var(--black);
+    }
+
+    .cta__right {
+      padding: 80px 60px;
+    }
+
+    .cta__form-row {
+      display: flex;
+      height: 44px;
+    }
+
+    .cta__input {
+      flex: 1;
+      background: var(--white);
+      border: none;
+      padding: 0 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--black);
+      height: 44px;
+    }
+
+    .cta__input::placeholder {
+      color: #999999;
+    }
+
+    .cta__submit {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 24px;
+      border: none;
+      cursor: pointer;
+      height: 44px;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .cta__submit:hover {
+      opacity: 0.85;
+    }
+
+    .cta__fine-print {
+      font-size: 11px;
+      color: var(--black);
+      margin-top: 10px;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--accent);
+      padding: 60px 60px 0;
+    }
+
+    .footer__nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .footer__nav-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer__nav-link {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--black);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .footer__nav-link:hover {
+      opacity: 0.6;
+    }
+
+    .footer__social {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding-top: 2px;
+    }
+
+    .footer__social-icon {
+      width: 18px;
+      height: 18px;
+      fill: var(--black);
+      transition: opacity 0.2s;
+    }
+
+    .footer__social-icon:hover {
+      opacity: 0.6;
+    }
+
+    .footer__wordmark {
+      background: var(--bg);
+      text-align: center;
+      padding: 60px;
+      margin: 0 -60px 0;
+    }
+
+    .footer__wordmark-container {
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .footer__wordmark-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .footer__wordmark-container .logo-blend {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: auto;
+      opacity: 0;
+    }
+
+    .footer__bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px 30px;
+      margin: 0 -60px;
+      background: var(--bg);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer__copy {
+      font-size: 10px;
+      color: #999999;
+    }
+
+    .footer__legal {
+      font-size: 10px;
+      color: #999999;
+    }
+
+    .footer__legal a {
+      text-decoration: none;
+      color: #999999;
+    }
+
+    .footer__legal a:hover {
+      opacity: 0.6;
+    }
+
+    /* ===== MOBILE RESPONSIVE — 768px ===== */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0 20px;
+      }
+
+      .navbar__links {
+        display: none;
+      }
+
+      .navbar__hamburger {
+        display: flex;
+      }
+
+      .hero {
+        padding: 60px 24px 40px;
+        min-height: auto;
+      }
+
+      .hero__line {
+        font-size: 36px;
+      }
+
+      .hero__line--marathon {
+        font-size: 72px;
+      }
+
+      .hero__press {
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 40px;
+      }
+
+      .hero__press-divider {
+        display: none;
+      }
+
+      .hero__press-item {
+        padding: 0;
+        font-size: 10px;
+      }
+
+      .stats__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats__item {
+        border-right: none;
+        border-bottom: 1px solid #ffffff22;
+      }
+
+      .stats__item:nth-child(odd) {
+        border-right: 1px solid #ffffff22;
+      }
+
+      .stats__item:nth-last-child(-n+2) {
+        border-bottom: none;
+      }
+
+      .stats__number {
+        font-size: 36px;
+      }
+
+      .two-col--55-45,
+      .two-col--45-55,
+      .two-col--50-50 {
+        grid-template-columns: 1fr;
+      }
+
+      .splits__image {
+        min-height: 300px;
+      }
+
+      .splits__content {
+        padding: 40px 24px;
+      }
+
+      .splits__heading {
+        font-size: 40px;
+        line-height: 40px;
+      }
+
+      .splits__heading-line-1 {
+        height: 28px;
+      }
+
+      .certificate__left {
+        padding: 40px 24px;
+      }
+
+      .certificate__heading {
+        font-size: 44px;
+      }
+
+      .certificate__heading .cert-word {
+        font-size: 48px;
+      }
+
+      .certificate__right {
+        padding: 0 24px 40px;
+      }
+
+      .photos {
+        padding: 40px 24px;
+      }
+
+      .photos__heading {
+        font-size: 40px;
+        line-height: 40px;
+      }
+
+      .photos__heading-line-1 {
+        height: 28px;
+      }
+
+      .photos__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .story__left {
+        padding: 40px 24px;
+      }
+
+      .story__heading {
+        font-size: 40px;
+      }
+
+      .story__heading .accent-big {
+        font-size: 52px;
+      }
+
+      .story__right {
+        padding: 0 24px 40px;
+      }
+
+      .cta__left {
+        padding: 40px 24px 20px;
+      }
+
+      .cta__heading {
+        font-size: 36px;
+      }
+
+      .cta__right {
+        padding: 0 24px 40px;
+      }
+
+      .cta__form-row {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .cta__input {
+        height: 44px;
+      }
+
+      .cta__submit {
+        height: 44px;
+      }
+
+      .footer {
+        padding: 40px 24px 0;
+      }
+
+      .footer__nav {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer__wordmark {
+        margin: 0 -24px 0;
+        padding: 40px 24px;
+      }
+
+      .footer__bottom {
+        margin: 0 -24px;
+        padding: 20px 24px 30px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+
+      .section-padded {
+        padding: 40px 24px;
+      }
+
+      .cert-card__buttons {
+        flex-direction: column;
+      }
+
+      .story__buttons {
+        flex-direction: column;
+      }
+
+      .story__buttons .btn-primary,
+      .story__buttons .btn-secondary {
+        text-align: center;
+      }
+    }
+
+    /* ===== SECTION 2.5 — BIB & MAP ===== */
+    .bib-map {
+      background: var(--bg);
+      border-bottom: 1px solid #222222;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bib-map::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('IMAGES/bib_sn.png') center/cover no-repeat;
+      mix-blend-mode: soft-light;
+      opacity: 90%;
+      z-index: 0;
+    }
+
+    .bib-map__container {
+      display: flex;
+      align-items: stretch;
+      gap: 40px;
+      padding: 40px 60px;
+      min-height: calc(100vh - 52px);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* — Left: Bib — */
+    .bib-map__left {
+      flex: 0 0 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      justify-content: center;
+    }
+
+    .bib__heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-size: 48px;
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: -0.7px;
+      margin-bottom: 8px;
+    }
+
+    .bib__desc {
+      font-size: 13px;
+      color: #cccccc;
+    }
+
+    .bib__card {
+      width: 100%;
+      background: #ffffff;
+      color: #000000;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      border: 3px solid var(--accent);
+    }
+
+    .bib__card-top {
+      background: #1a1a1a;
+      color: var(--accent);
+      padding: 16px;
+      text-align: center;
+      border-bottom: 3px solid #000000;
+    }
+
+    .bib__brand {
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .bib__number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-size: 72px;
+      line-height: 0.85;
+      font-weight: 700;
+      letter-spacing: -2px;
+      margin-bottom: 6px;
+    }
+
+    .bib__name {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .bib__card-bottom {
+      display: flex;
+      padding: 16px;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+    }
+
+    .bib__info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .bib__label {
+      font-size: 9px;
+      font-weight: 700;
+      color: #666666;
+      text-transform: uppercase;
+    }
+
+    .bib__value {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #000000;
+    }
+
+    .bib__qr {
+      width: 80px;
+      height: 80px;
+      background: #ffffff;
+      padding: 3px;
+      border: 1px solid #cccccc;
+    }
+
+    .bib__qr img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* — Right: Map area — */
+    .bib-map__right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .map-section__header {
+      margin-bottom: 16px;
+    }
+
+    .map-section__heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--white);
+    }
+
+    .map-layout {
+      display: flex;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .map-layout__image {
+      flex: 0 1 65%;
+      position: relative;
+      background: #1a1a1a;
+      border: 2px solid var(--accent);
+      border-radius: 6px;
+      overflow: hidden;
+      max-height: 480px;
+    }
+
+    .map-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .map-controls {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .map-btn {
+      width: 30px;
+      height: 30px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #fff;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .map-btn:hover {
+      background: #333;
+    }
+
+    .map-layout__sidebar {
+      flex: 0 0 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .map-card {
+      background: rgba(26, 26, 26, 0.95);
+      border: 1px solid #333;
+      padding: 20px;
+      color: var(--white);
+      border-radius: 4px;
+    }
+
+    .map-card--wave {
+      border: 2px solid var(--accent);
+    }
+
+    .map-stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .map-stat:last-child {
+      margin-bottom: 0;
+    }
+
+    .map-stat__label {
+      color: #999;
+    }
+
+    .map-stat__value {
+      font-weight: 600;
+    }
+
+    .wave-header {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .wave-time {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-style: italic;
+      font-size: 36px;
+      line-height: 1;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .wave-desc {
+      color: #999;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .wave-bibs {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1024px) {
+      .bib-map__container {
+        flex-direction: column;
+        padding: 40px 24px;
+        gap: 32px;
+        min-height: auto;
+      }
+
+      .bib-map__left {
+        flex: 1;
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .map-layout {
+        flex-direction: column;
+      }
+
+      .map-layout__sidebar {
+        flex: 1;
+        width: 100%;
+      }
+
+      .map-controls {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="navbar__logo">
+      <img class="logo-base" src="IMAGES/eventforce_logolight_mixed.png" alt="Eventforce">
+      <img class="logo-blend" src="IMAGES/eventforce_green_logolight_mixed.png" alt="Eventforce">
+    </a>
+    <div class="navbar__links">
+      <a href="#hero" class="navbar__link navbar__link--active">MY RACE</a>
+      <a href="#splits" class="navbar__link">SPLITS</a>
+      <a href="#certificate" class="navbar__link">CERTIFICATE</a>
+      <a href="#photos" class="navbar__link">PHOTOS</a>
+      <a href="#story" class="navbar__link">PROFILE</a>
+    </div>
+    <button class="navbar__hamburger" id="hamburger" aria-label="Toggle navigation menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Nav Overlay -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#hero" onclick="closeNav()">MY RACE</a>
+    <a href="#splits" onclick="closeNav()">SPLITS</a>
+    <a href="#certificate" onclick="closeNav()">CERTIFICATE</a>
+    <a href="#photos" onclick="closeNav()">PHOTOS</a>
+    <a href="#story" onclick="closeNav()">PROFILE</a>
+  </div>
+
+
+  <!-- ===== SECTION 1 — HERO (dark bg) ===== -->
+  <section class="hero section-dark" id="hero">
+    <h1 class="hero__heading">
+      <span class="hero__line">INDIA'S FASTEST-GROWING</span>
+      <span class="hero__line hero__line--marathon outline-accent">MARATHON</span>
+      <span class="hero__line">PLATFORM — 50,000 <span class="accent">RUNNERS</span></span>
+      <span class="hero__line accent">.FINISH LINE</span>
+    </h1>
+  </section>
+
+
+  <!-- ===== SECTION 2 — STATS BAR (dark bg) ===== -->
+  <section class="stats section-dark" id="stats">
+    <div class="stats__grid">
+      <div class="stats__item">
+        <div class="stats__number anton">50,000</div>
+        <div class="stats__label">Runners registered</div>
+      </div>
+      <div class="stats__item">
+        <div class="stats__number anton">42.2 KM</div>
+        <div class="stats__label">Full marathon</div>
+      </div>
+      <div class="stats__item">
+        <div class="stats__number anton">3:47:22</div>
+        <div class="stats__label">Your finish time</div>
+      </div>
+      <div class="stats__item">
+        <div class="stats__number anton">#1,284</div>
+        <div class="stats__label">Your overall rank</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== SECTION 2.5 — DIGITAL BIB & RACE MAP ===== -->
+  <section class="bib-map section-dark" id="bib-map">
+    <div class="bib-map__container">
+
+      <!-- Left: Bib Card -->
+      <div class="bib-map__left">
+        <div>
+          <h2 class="bib__heading">YOUR DIGITAL<br><span class="accent outline-accent">BIB CARD</span></h2>
+          <p class="bib__desc">Present this QR code at the expo for quick kit collection.</p>
+        </div>
+        <div class="bib__card">
+          <div class="bib__card-top">
+            <div class="bib__brand">EVENTFORCE MARATHON 2026</div>
+            <div class="bib__number">1047</div>
+            <div class="bib__name">MARK JOHNSON</div>
+          </div>
+          <div class="bib__card-bottom">
+            <div class="bib__info">
+              <div class="bib__label">CATEGORY</div>
+              <div class="bib__value">ELITE / 42K</div>
+              <div class="bib__label">CORRAL</div>
+              <div class="bib__value">WAVE A</div>
+            </div>
+            <div class="bib__qr">
+              <img src="IMAGES/Mark Johnson — Computer Science & Creative Developer.png" alt="QR Code">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Map Area -->
+      <div class="bib-map__right">
+        <div class="map-section__header">
+          <h2 class="map-section__heading">RACE ROUTE & LOGISTICS</h2>
+        </div>
+        <div class="map-layout">
+          <div class="map-layout__image">
+            <img src="IMAGES/map.jpg" alt="Race Map" class="map-img">
+            <div class="map-controls">
+              <button class="map-btn">+</button>
+              <button class="map-btn">-</button>
+            </div>
+          </div>
+          <div class="map-layout__sidebar">
+            <div class="map-card">
+              <div class="map-stat">
+                <span class="map-stat__label">Route Distance</span>
+                <span class="map-stat__value accent">42.195 KM</span>
+              </div>
+              <div class="map-stat">
+                <span class="map-stat__label">Checkpoints Ready</span>
+                <span class="map-stat__value">7 / 7</span>
+              </div>
+              <div class="map-stat">
+                <span class="map-stat__label">Hydration Stations</span>
+                <span class="map-stat__value">6 Confirmed</span>
+              </div>
+              <div class="map-stat">
+                <span class="map-stat__label">Medical Teams</span>
+                <span class="map-stat__value accent">Active (42)</span>
+              </div>
+            </div>
+            <div class="map-card map-card--wave">
+              <div class="wave-header">WAVE A – JUL 10, 2026</div>
+              <div class="wave-time">5:30 AM</div>
+              <div class="wave-desc">Elite & 42K runners</div>
+              <div class="wave-bibs">8,420 bibs assigned</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===== SECTION 3 — SPLITS (dark bg, two-column) ===== -->
+  <section class="splits section-dark" id="splits">
+    <div class="two-col two-col--55-45">
+      <div class="splits__image">
+        <img src="images/splits_runner.png" alt="Runner mid-race in dark moody lighting">
+      </div>
+      <div class="splits__content">
+        <h2 class="splits__heading">
+          <span class="splits__heading-line-1">ANALYZE YOUR</span>
+          <span class="splits__heading-line-2 outline-accent">PERFORMANCE</span>
+        </h2>
+        <p class="splits__body">
+          Detailed split analysis for every 5KM interval. See where you accelerated and where the wall hit. Compare your
+          pace against the top 8% of finishers in the Male 30–34 category.
+        </p>
+        <button class="btn-primary anton" id="viewSplitsBtn">View My Splits</button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== SECTION 4 — CERTIFICATE (acid-green bg, two-column) ===== -->
+  <section class="certificate section-accent" id="certificate">
+    <div class="two-col two-col--50-50">
+      <div class="certificate__left">
+        <h2 class="certificate__heading">
+          YOUR FINISHER<br>
+          <span class="cert-word outline-black">CERTIFICATE</span><br>
+          IS READY
+        </h2>
+      </div>
+      <div class="certificate__right">
+        <div class="cert-card">
+          <div class="cert-card__brand">Eventforce</div>
+
+          <div class="cert-card__label">Participant</div>
+          <div class="cert-card__value cert-card__value--large">ARJUN MEHTA</div>
+
+          <div class="cert-card__label">Bib No.</div>
+          <div class="cert-card__value">A-07284</div>
+
+          <div class="cert-card__label">Finish Time</div>
+          <div class="cert-card__value">3:47:22</div>
+
+          <div class="cert-card__label">Category Rank</div>
+          <div class="cert-card__value">342</div>
+
+          <div class="cert-card__label">Overall Rank</div>
+          <div class="cert-card__value">1,284</div>
+        </div>
+        <div class="cert-card__buttons">
+          <button class="btn-cert-download" id="downloadCertBtn">Download PDF</button>
+          <button class="btn-cert-share" id="shareCertBtn">Share on Instagram</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== SECTION 5 — RACE PHOTOS (dark bg) ===== -->
+  <section class="photos section-dark" id="photos">
+    <div class="photos__header">
+      <h2 class="photos__heading">
+        <span class="photos__heading-line-1">YOUR RACE</span>
+        <span class="photos__heading-line-2 outline-accent">PHOTOS</span>
+      </h2>
+    </div>
+    <div class="photos__subtitle">14 PHOTOS MATCHED · FACIAL RECOGNITION</div>
+
+    <div class="photos__grid">
+      <div class="photos__cell">
+        <img src="images/marathon_km5.png" alt="Marathon photo at KM 5">
+        <div class="photos__km-label">KM 5</div>
+      </div>
+      <div class="photos__cell">
+        <img src="images/marathon_km10.png" alt="Marathon photo at KM 10">
+        <div class="photos__km-label">KM 10</div>
+      </div>
+      <div class="photos__cell">
+        <img src="images/marathon_km21.png" alt="Marathon photo at KM 21">
+        <div class="photos__km-label">KM 21</div>
+      </div>
+      <div class="photos__cell">
+        <img src="images/marathon_km35.png" alt="Marathon photo at KM 35">
+        <div class="photos__km-label">KM 35</div>
+      </div>
+      <div class="photos__cell">
+        <img src="images/marathon_km40.png" alt="Marathon photo at KM 40">
+        <div class="photos__km-label">KM 40</div>
+      </div>
+      <div class="photos__cell">
+        <img src="https://images.unsplash.com/photo-1596727362302-b8d891c42ab8?w=600&h=450&fit=crop"
+          alt="Marathon finish line photo">
+        <div class="photos__km-label">FINISH</div>
+      </div>
+    </div>
+
+    <div class="photos__download">
+      <button class="btn-primary anton" id="downloadPhotosBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="square" stroke-linejoin="miter">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Download All in HD
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ===== SECTION 6 — RACE STORY / VELOTALES (dark bg, two-column) ===== -->
+  <section class="story section-dark" id="story">
+    <div class="two-col two-col--45-55">
+      <div class="story__left">
+        <h2 class="story__heading">
+          YOUR RACE<br>
+          STORY IS<br>
+          <span class="accent-big outline-accent">LIVE</span>
+        </h2>
+        <p class="story__body">
+          Relive your marathon experience with an AI-generated cinematic reel featuring your best moments, pace data,
+          and personal records.
+        </p>
+        <div class="story__buttons">
+          <button class="btn-primary anton" id="watchStoryBtn">Watch My Story</button>
+          <button class="btn-secondary anton" id="postStoryBtn">Post to Instagram</button>
+        </div>
+      </div>
+      <div class="story__right">
+        <div class="story__video">
+          <button class="story__play-btn" aria-label="Play race story video" id="playVideoBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <polygon points="5,3 19,12 5,21" fill="#C8F400" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== SECTION 7 — CTA SUBSCRIBE (acid-green bg, two-column) ===== -->
+  <section class="cta-subscribe section-accent" id="subscribe">
+    <div class="two-col two-col--50-50">
+      <div class="cta__left">
+        <h2 class="cta__heading">YOUR JOURNEY TO THE FINISH LINE STARTS HERE</h2>
+      </div>
+      <div class="cta__right">
+        <div class="cta__form-row">
+          <input type="email" class="cta__input" id="emailInput" placeholder="EMAIL ADDRESS" aria-label="Email address">
+          <button class="cta__submit anton" id="subscribeBtn">Subscribe</button>
+        </div>
+        <p class="cta__fine-print">Subscribe for exclusive training tips and race updates</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== FOOTER (acid-green bg) ===== -->
+  <footer class="footer section-accent">
+    <div class="footer__nav">
+      <div class="footer__nav-col">
+        <a href="#" class="footer__nav-link">Training</a>
+        <a href="#" class="footer__nav-link">Event Calendar</a>
+        <a href="#" class="footer__nav-link">Race Day</a>
+        <a href="#" class="footer__nav-link">Photo Matching</a>
+        <a href="#" class="footer__nav-link">Race Tracking</a>
+      </div>
+      <div class="footer__nav-col">
+        <a href="#" class="footer__nav-link">Features</a>
+        <a href="#" class="footer__nav-link">Help Desk</a>
+        <a href="#" class="footer__nav-link">Contact Us</a>
+        <a href="#" class="footer__nav-link">Media Kit</a>
+        <a href="#" class="footer__nav-link">Partner Info</a>
+      </div>
+      <div class="footer__nav-col">
+        <a href="#" class="footer__nav-link">Terms of Service</a>
+        <a href="#" class="footer__nav-link">Privacy Policy</a>
+        <a href="#" class="footer__nav-link">Refund Policy</a>
+        <a href="#" class="footer__nav-link">Liability Waiver</a>
+        <a href="#" class="footer__nav-link">Safety Notice</a>
+      </div>
+      <div class="footer__nav-col">
+        <div class="footer__social">
+          <!-- Instagram -->
+          <a href="#" aria-label="Instagram">
+            <svg class="footer__social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="black" stroke-width="2" />
+              <circle cx="12" cy="12" r="5" fill="none" stroke="black" stroke-width="2" />
+              <circle cx="17.5" cy="6.5" r="1.5" fill="black" />
+            </svg>
+          </a>
+          <!-- Facebook -->
+          <a href="#" aria-label="Facebook">
+            <svg class="footer__social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" fill="black" />
+            </svg>
+          </a>
+          <!-- X (Twitter) -->
+          <a href="#" aria-label="X">
+            <svg class="footer__social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M4 2l6.5 8.5L4 22h2l5.5-9.5L16 22h4l-6.5-8.5L20 2h-2l-5.5 9.5L8 2H4z" fill="black" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer__wordmark">
+      <div class="footer__wordmark-container">
+        <img class="logo-base" src="IMAGES/eventforce_logolight_mixed.png" alt="Eventforce">
+        <img class="logo-blend" src="IMAGES/eventforce_green_logolight_mixed.png" alt="Eventforce">
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <div class="footer__copy">© 2026 Eventforce. All Rights Reserved</div>
+      <div class="footer__legal">
+        <a href="#">Terms and Conditions</a> · <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ===== JAVASCRIPT — HAMBURGER TOGGLE ===== -->
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+
+    hamburger.addEventListener('click', function () {
+      this.classList.toggle('open');
+      mobileNav.classList.toggle('open');
+      document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+    });
+
+    function closeNav() {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Active nav link tracking on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.navbar__link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 80;
+        if (window.scrollY >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('navbar__link--active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('navbar__link--active');
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
